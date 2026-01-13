@@ -331,7 +331,6 @@ Une réservation sur un livre indisponible.
 
 [![Vidéo Démo](demo.gif)](https://github.com/rajbhanif/api-location-livre/raw/main/api-location-livre.mp4)
 
-*La vidéo s'ouvrira directement dans votre navigateur*
 
 # Liens importants
 
