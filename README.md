@@ -327,7 +327,7 @@ Une réservation sur un livre indisponible.
 
 ## Démonstration
 
-### Regarder la démo (cmd + click)
+### Regarder la démo 
 
 [![Vidéo Démo](demo.gif)](https://github.com/rajbhanif/api-location-livre/raw/main/api-location-livre.mp4)
 
