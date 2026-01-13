@@ -325,6 +325,13 @@ Une réservation sur un livre indisponible.
 
 ---
 
+## Démonstration
+
+### Regarder la démo (cmd + click)
+*Processus complet : Accueil → Jeu → Victoire → Recommencer*
+
+<a href="https://rajbhanif.github.io/api-location-livre/api-location-livre.mp4" target="_blank">▶ Cliquez ici pour ouvrir la vidéo de démo</a>
+
 # Liens importants
 
 ## Local 
