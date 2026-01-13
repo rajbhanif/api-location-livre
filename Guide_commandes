@@ -1,0 +1,152 @@
+API Location Livres (commandes a exécuter avec endpoints)
+
+I. Démarrage du projet
+1. Lancer Docker :
+docker compose up --build -d
+
+1.1 Si besoin de recommencer le build:
+docker compose down
+
+
+2. Initialiser la base :
+docker compose exec core-api-service python -m app.db.init_db
+
+3. Tester santé API :
+curl http://localhost:8000/health
+
+
+II. Authentification – JWT
+1. Obtenir un token membre :
+MEMBRE_TOKEN=$(curl -s -X POST http://localhost:8000/api/v1/auth/connexion \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=membre@example.com&password=membre" | jq -r ".access_token")
+echo $MEMBRE_TOKEN
+
+2. Obtenir un token admin :
+ADMIN_TOKEN=$(curl -s -X POST http://localhost:8000/api/v1/auth/connexion \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=admin@example.com&password=admin" | jq -r ".access_token")
+echo $ADMIN_TOKEN
+
+2.2   Obtenir un refresh token :
+curl -X POST http://localhost:8000/api/v1/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d '{
+    "refresh_token": "REFRESH_TOKEN_ICI"
+  }'
+
+3. Tester /auth/whoami :
+curl -X GET http://localhost:8000/api/v1/auth/whoami \
+  -H "Authorization: Bearer $MEMBRE_TOKEN"
+
+
+III. Livres – CRUD Admin
+1. Lister les livres :
+curl -X GET http://localhost:8000/api/v1/catalogue
+
+2. Créer un livre :
+curl -X POST http://localhost:8000/api/v1/admin/livres \
+  -H "Authorization: Bearer $ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "titre": "Harry Potter",
+    "auteur": "J.K. Rowling",
+    "annee": 1997,
+    "nombreCopies": 4
+  }'
+
+3. Modifier un livre :
+curl -X PUT http://localhost:8000/api/v1/admin/livres/1 \
+  -H "Authorization: Bearer $ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "nombreCopies": 10 }'
+
+4. Supprimer un livre :
+curl -X DELETE http://localhost:8000/api/v1/admin/livres/7 \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+
+
+4.1 Si il y a des prêts avec le livre faire un nouveau livre 
+curl -X POST http://localhost:8000/api/v1/admin/livres \
+  -H "Authorization: Bearer $ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "titre": "Livre Supprimable",
+    "auteur": "Auteur Test",
+    "annee": 2025,
+    "nombreCopies": 2
+  }'
+
+
+4.2 Supprimer ce livre ci:
+curl -X DELETE http://localhost:8000/api/v1/admin/livres/5 \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+
+
+
+IV. Prêts (Membre)
+1. Faire un emprunt :
+curl -X POST http://localhost:8000/api/v1/membre/prets \
+  -H "Authorization: Bearer $MEMBRE_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"livreId": 2}'
+
+2. Voir mes prêts :
+curl -X GET http://localhost:8000/api/v1/membre/prets \
+  -H "Authorization: Bearer $MEMBRE_TOKEN"
+
+
+V. Réservations
+1. Créer une réservation :
+curl -X POST http://localhost:8000/api/v1/reservations \
+  -H "Authorization: Bearer $MEMBRE_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"livreId": 3}'
+
+
+VI. Notifications (Admin)
+1. Lister les notifications :
+curl -X GET http://localhost:8000/api/v1/admin/notifications \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+
+1.1 ajouter -v:
+curl -v -X GET http://localhost:8000/api/v1/admin/notifications \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+
+1.2 creer une notificación d’emprunt:
+curl -X POST http://localhost:8000/api/v1/admin/notifications/confirmation-emprunt \
+  -H "Authorization: Bearer $ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"pretId": 1}'
+
+1.3. Lister a nouveau les notifications:
+curl -X GET http://localhost:8000/api/v1/admin/notifications \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+
+
+VII. Amendes (Membre)
+1. Voir mes amendes :
+curl -X GET http://localhost:8000/api/v1/membre/amendes \
+  -H "Authorization: Bearer $MEMBRE_TOKEN"
+
+
+VIII. Audit Logs (Admin)
+1. Voir toutes les actions admin :
+curl -X GET http://localhost:8000/api/v1/admin/audit \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+
+
+FONCTIONNEMENT DES TESTS:
+1. Avec docker:
+docker compose exec api pytest -q
+
+2. Dans Bash:
+python -m pytest
+     ou
+source .venv/bin/activate
+PYTHONPATH=. python3.12 -m pytest -q
+
+
+
+
+
