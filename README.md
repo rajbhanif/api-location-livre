@@ -335,7 +335,8 @@ Une réservation sur un livre indisponible.
 
 [![Vidéo Démo](demo.gif)](demo-large.gif)
 
-*Cliquez sur l’image pour ouvrir une version plus grande de la démonstration.*
+<a href="https://rajbhanif.github.io/api-location-livre/docs/api-location-livre.mp4" target="_blank">▶ Cliquez ici pour ouvrir la vidéo de démo</a>
+
 
 
 
